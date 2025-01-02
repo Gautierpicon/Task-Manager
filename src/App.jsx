@@ -1,21 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
 
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(() => {
+    // Récupérer les tâches depuis LocalStorage au chargement initial
+    try {
+      const storedTodos = localStorage.getItem("todos");
+      return storedTodos ? JSON.parse(storedTodos) : [];
+    } catch (error) {
+      console.error("Error parsing LocalStorage data:", error);
+      return [];
+    }
+  });
+
   const [input, setInput] = useState("");
 
+  // Sauvegarder les tâches dans LocalStorage chaque fois qu'elles changent
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
+
   const addTodo = () => {
-    if(input.trim()){
+    if (input.trim()) {
       const isDuplicate = todos.some(todo => todo.text.toLowerCase() === input.trim().toLowerCase());
-    if (isDuplicate) {
-      alert("A task with the same title already exists!");
-      return;
+      if (isDuplicate) {
+        alert("A task with the same title already exists!");
+        return;
+      }
+      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setInput("");
     }
-      setTodos([...todos,{id: Date.now(), text:input, completed: false}])
-      setInput("")
-    }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-emerald-400">
