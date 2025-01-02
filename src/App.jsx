@@ -21,9 +21,9 @@ function App() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-emerald-400">
        <div className="bg-white shadow-lg rounded-3xl p-16">
 
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">REACT TODO LIST ✅</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-900 mb-6 font-funnel"> fr React Todo list ✅</h1>
 
-        <div className="mb-4 flex">
+        <div className="mb-4 flex font-oswald">
           <input 
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -44,7 +44,7 @@ function App() {
           </button>
         </div>
 
-        <ul className="space-y-2">
+        <ul className="space-y-2 font-oswald">
           {
             todos.map((todo) => (
               <li
