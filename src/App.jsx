@@ -21,7 +21,7 @@ function App() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-emerald-400">
        <div className="bg-white shadow-lg rounded-3xl p-16">
 
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-6 font-funnel"> fr React Todo list ✅</h1>
+        <h1 className="text-3xl font-bold text-center text-gray-900 mb-6 font-funnel">React Todo list ✅</h1>
 
         <div className="mb-4 flex font-oswald">
           <input 
