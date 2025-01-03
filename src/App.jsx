@@ -112,7 +112,7 @@ function App() {
                       t.id === todo.id ? {...t, completed: !t.completed} : t
                     ))
                   )}
-                  className={`mr-2 h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500 dark:bg-black dark:border-gray-600 dark:focus:ring-blue-400`}
+                  className={`mr-2 h-5 w-5 text-blue-600 ${todo.completed ? 'cursor-pointer opacity-50' : 'cursor-pointer'}`}
                 />
                 <span
                   className={`flex-grow ${todo.completed ? "line-through text-gray-500" : "text-gray-800 dark:text-gray-200"}`}
