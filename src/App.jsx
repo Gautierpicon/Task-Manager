@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 function App() {
 
   const [todos, setTodos] = useState(() => {
-    // Récupérer les tâches depuis LocalStorage au chargement initial
     try {
       const storedTodos = localStorage.getItem("todos");
       return storedTodos ? JSON.parse(storedTodos) : [];
@@ -14,8 +13,16 @@ function App() {
   });
 
   const [input, setInput] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // New state for error message
 
-  // Sauvegarder les tâches dans LocalStorage chaque fois qu'elles changent
+  useEffect(() => {
+    if (errorMessage) {
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 2000);
+    }
+  }, [errorMessage]);
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
@@ -24,7 +31,8 @@ function App() {
     if (input.trim()) {
       const isDuplicate = todos.some(todo => todo.text.toLowerCase() === input.trim().toLowerCase());
       if (isDuplicate) {
-        alert("A task with the same title already exists!");
+        setErrorMessage("This task already exists!"); // Set error message
+        setInput(""); // Clear the input field
         return;
       }
       setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
@@ -34,11 +42,11 @@ function App() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-emerald-400">
-       <div className="bg-white shadow-lg rounded-3xl p-16">
+      <div className="bg-white shadow-lg rounded-3xl p-16">
 
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-6 font-funnel">React Todo list ✅</h1>
 
-        <div className="mb-4 flex font-oswald">
+        <div className="mb-4 flex font-oswald relative">
           <input 
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -48,8 +56,8 @@ function App() {
               }
             }}
             type="text" 
-            placeholder="Add a new todo" 
-            className="flex-grow px-3 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder={errorMessage || "Add a new todo"} // Display error message or default placeholder
+            className={`flex-grow px-3 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errorMessage ? 'placeholder:text-red-500' : ''}`}
           />
           <button
             onClick={addTodo}
@@ -74,7 +82,7 @@ function App() {
                       t.id === todo.id ? {...t, completed: !t.completed} : t
                     ))
                   )}
-                  className="mr-2 h-5 w-5 text-blue-600"
+                  className={`mr-2 h-5 w-5 text-blue-600 ${todo.completed ? 'cursor-pointer opacity-50' : 'cursor-pointer'}`}
                 />
                 <span
                   className={`flex-grow ${todo.completed ? "line-through text-gray-500" : "text-gray-800"}`}
@@ -82,7 +90,7 @@ function App() {
 
                 <button
                   onClick={() => setTodos(todos.filter((t) => t.id !== todo.id))}
-                  className="ml-2 border-none p-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                  className={`ml-2 border-none p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 ${todo.completed ? 'opacity-50' : ''}`}
                 >
                   Delete
                 </button>
@@ -92,8 +100,7 @@ function App() {
         </ul>
       </div>
     </div>
-
-  )
+  );
 }
 
 export default App;
