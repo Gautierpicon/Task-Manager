@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 function App() {
-
   const [todos, setTodos] = useState(() => {
     try {
       const storedTodos = localStorage.getItem("todos");
@@ -13,17 +12,14 @@ function App() {
   });
 
   const [input, setInput] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // State for error message
-  const [darkMode, setDarkMode] = useState(null); // State for dark mode
+  const [errorMessage, setErrorMessage] = useState("");
+  const [darkMode, setDarkMode] = useState(null);
 
   useEffect(() => {
-    // Detect OS preference and set initial state
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    // Check for user preference in localStorage
     const savedPreference = localStorage.getItem('darkMode');
     setDarkMode(savedPreference !== null ? JSON.parse(savedPreference) : prefersDark);
 
-    // Listen for changes in OS preference
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
       if (darkMode === null) {
@@ -32,7 +28,6 @@ function App() {
     };
     mediaQuery.addEventListener('change', handleChange);
 
-    // Cleanup
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
     };
@@ -49,7 +44,7 @@ function App() {
     if (errorMessage) {
       setTimeout(() => {
         setErrorMessage("");
-      }, 2000); // Clear after 2 seconds
+      }, 2000);
     }
   }, [errorMessage]);
 
@@ -61,22 +56,65 @@ function App() {
     if (input.trim()) {
       const isDuplicate = todos.some(todo => todo.text.toLowerCase() === input.trim().toLowerCase());
       if (isDuplicate) {
-        setErrorMessage("This task already exists!"); // Set error message
-        setInput(""); // Clear the input field
+        setErrorMessage("This task already exists!");
+        setInput("");
         return;
       }
-      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setTodos([...todos, { id: Date.now(), text: input, status: "To Do", completed: false }]);
       setInput("");
+    }
+  };
+
+  const toggleStatus = (id) => {
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) {
+          if (todo.status === "To Do") return { ...todo, status: "In Progress" };
+          if (todo.status === "In Progress") return { ...todo, status: "Completed", completed: true };
+          if (todo.status === "Completed") return { ...todo, status: "To Do", completed: false };
+        }
+        return todo;
+      })
+    );
+  };
+
+  const freezeTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, status: "Frozen", completed: false } : todo
+      )
+    );
+  };
+
+  const unfreezeTodo = (id) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, status: "To Do", completed: false } : todo
+      )
+    );
+  };
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "To Do":
+        return "bg-blue-200 text-blue-800";
+      case "In Progress":
+        return "bg-yellow-200 text-yellow-800";
+      case "Completed":
+        return "bg-green-200 text-green-800";
+      case "Frozen":
+        return "bg-cyan-200 text-cyan-800";
+      default:
+        return "";
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-emerald-400 dark:from-blue-800 dark:to-emerald-600">
       <div className="bg-white shadow-lg rounded-3xl p-16 dark:bg-gray-800 dark:text-white">
+        <h1 className="text-3xl font-bold text-center text-gray-900 mb-6 dark:text-white font-funnel">Todo-List ✅</h1>
 
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-6 font-funnel dark:text-white">React Todo list ✅</h1>
-
-        <div className="mb-4 flex font-oswald relative">
+        <div className="mb-4 flex font-oswald">
           <input 
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -87,7 +125,7 @@ function App() {
             }}
             type="text" 
             placeholder={errorMessage || "Add a new todo"} 
-            className={`flex-grow px-3 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errorMessage ? 'placeholder:text-red-500 dark:placeholder:text-red-500' : ''} dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400`}
+            className="flex-grow px-3 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
           />
           <button
             onClick={addTodo}
@@ -98,35 +136,81 @@ function App() {
         </div>
 
         <ul className="space-y-2 font-oswald">
-          {
-            todos.map((todo) => (
-              <li
-                key={todo.id}
-                className="flex items-center p-3 rounded-lg bg-slate-100 border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
-              >
-                <input 
-                  type="checkbox" 
+          {todos.map((todo) => (
+            <li key={todo.id} className="flex flex-col p-3 rounded-lg bg-slate-100 border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
                   checked={todo.completed}
-                  onChange={() => setTodos(
-                    todos.map((t) => (
-                      t.id === todo.id ? {...t, completed: !t.completed} : t
-                    ))
-                  )}
-                  className={`mr-2 h-5 w-5 text-blue-600 ${todo.completed ? 'cursor-pointer opacity-50' : 'cursor-pointer'}`}
+                  onChange={() => toggleStatus(todo.id)}
+                  className="mr-2 h-5 w-5 text-blue-600 cursor-pointer"
                 />
-                <span
-                  className={`flex-grow ${todo.completed ? "line-through text-gray-500" : "text-gray-800 dark:text-gray-200"}`}
-                >{todo.text}</span>
+                <span className={`flex-grow ${todo.completed ? "line-through text-gray-500" : "text-gray-800 dark:text-gray-200"}`}>
+                  {todo.text}
+                </span>
+
+                {todo.status !== "Completed" && (
+                  todo.status === "Frozen" ? (
+                    <button
+                      onClick={() => unfreezeTodo(todo.id)}
+                      className="flex items-center ml-2 border-none p-2 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 dark:bg-cyan-700 dark:hover:bg-cyan-800"
+                    >
+                      <svg width="18px" height="18px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <g id="snow" transform="translate(-2 -2)">
+                          <path id="primary" d="M3,12H21M12,3V21" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-2" data-name="primary" d="M19,9l-2,3,2,3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-3" data-name="primary" d="M5,15l2-3L5,9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-4" data-name="primary" d="M15,19l-3-2L9,19" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-5" data-name="primary" d="M9,5l3,2,3-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </g>
+                      </svg>
+                      Unfreeze
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => freezeTodo(todo.id)}
+                      className="flex items-center ml-2 border-none p-2 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 dark:bg-cyan-700 dark:hover:bg-cyan-800"
+                    >
+                      <svg width="18px" height="18px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <g id="snow" transform="translate(-2 -2)">
+                          <path id="primary" d="M3,12H21M12,3V21" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-2" data-name="primary" d="M19,9l-2,3,2,3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-3" data-name="primary" d="M5,15l2-3L5,9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-4" data-name="primary" d="M15,19l-3-2L9,19" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                          <path id="primary-5" data-name="primary" d="M9,5l3,2,3-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                        </g>
+                      </svg>
+                      Freeze
+                    </button>
+                  )
+                )}
 
                 <button
                   onClick={() => setTodos(todos.filter((t) => t.id !== todo.id))}
-                  className={`ml-2 border-none p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 ${todo.completed ? 'opacity-50' : ''} dark:bg-red-700 dark:hover:bg-red-800`}
+                  className="flex items-center ml-2 border-none p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800"
                 >
+                  <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
+                  </svg>
                   Delete
                 </button>
-              </li>
-            ))
-          }
+              </div>
+              <div className={`mt-2 text-sm px-3 py-1 rounded flex items-center justify-center ${getStatusStyle(todo.status)}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                {todo.status}
+              </div>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
