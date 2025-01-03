@@ -109,6 +109,191 @@ function App() {
     }
   };
 
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "To Do":
+        return (
+          <svg
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+            />
+          </svg>
+        );
+      case "In Progress":
+        return (
+          <svg
+            className="h-4 w-4 mr-1"
+            stroke="currentColor" 
+            viewBox="-2.4 -2.4 28.80 28.80" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier"> 
+              <path 
+                d="M22 12C22 17.52 17.52 22 12 22C6.48 22 3.11 16.44 3.11 16.44M3.11 16.44H7.63M3.11 16.44V21.44M2 12C2 6.48 6.44 2 12 2C18.67 2 22 7.56 22 7.56M22 7.56V2.56M22 7.56H17.56" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round">
+              </path>
+            </g>
+          </svg>
+        );
+      case "Completed":
+        return (
+          <svg
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        );
+      case "Frozen":
+        return (
+          <svg
+            className="h-4 w-4 mr-1"
+            fill="none"
+            viewBox="0 0 20 20"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <g id="snow" transform="translate(-2 -2)">
+              <path
+                id="primary"
+                d="M3,12H21M12,3V21"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+              <path
+                id="primary-2"
+                data-name="primary"
+                d="M19,9l-2,3,2,3"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+              <path
+                id="primary-3"
+                data-name="primary"
+                d="M5,15l2-3L5,9"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+              <path
+                id="primary-4"
+                data-name="primary"
+                d="M15,19l-3-2L9,19"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+              <path
+                id="primary-5"
+                data-name="primary"
+                d="M9,5l3,2,3-2"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              />
+            </g>
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const FreezeIcon = ({ color }) => (
+    <svg
+      className="h-4 w-4 mr-1"
+      fill="none"
+      viewBox="0 0 20 20"
+      stroke={color}
+      strokeWidth={2}
+    >
+      <g id="snow" transform="translate(-2 -2)">
+        <path
+          id="primary"
+          d="M3,12H21M12,3V21"
+          fill="none"
+          stroke={color}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+        <path
+          id="primary-2"
+          data-name="primary"
+          d="M19,9l-2,3,2,3"
+          fill="none"
+          stroke={color}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+        <path
+          id="primary-3"
+          data-name="primary"
+          d="M5,15l2-3L5,9"
+          fill="none"
+          stroke={color}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+        <path
+          id="primary-4"
+          data-name="primary"
+          d="M15,19l-3-2L9,19"
+          fill="none"
+          stroke={color}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+        <path
+          id="primary-5"
+          data-name="primary"
+          d="M9,5l3,2,3-2"
+          fill="none"
+          stroke={color}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+        />
+      </g>
+    </svg>
+  );
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-emerald-400 dark:from-blue-800 dark:to-emerald-600">
       <div className="bg-white shadow-lg rounded-3xl p-16 dark:bg-gray-800 dark:text-white">
@@ -155,15 +340,7 @@ function App() {
                       onClick={() => unfreezeTodo(todo.id)}
                       className="flex items-center ml-2 border-none p-2 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 dark:bg-cyan-700 dark:hover:bg-cyan-800"
                     >
-                      <svg width="18px" height="18px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <g id="snow" transform="translate(-2 -2)">
-                          <path id="primary" d="M3,12H21M12,3V21" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-2" data-name="primary" d="M19,9l-2,3,2,3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-3" data-name="primary" d="M5,15l2-3L5,9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-4" data-name="primary" d="M15,19l-3-2L9,19" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-5" data-name="primary" d="M9,5l3,2,3-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                        </g>
-                      </svg>
+                      <FreezeIcon color="white" />
                       Unfreeze
                     </button>
                   ) : (
@@ -171,15 +348,7 @@ function App() {
                       onClick={() => freezeTodo(todo.id)}
                       className="flex items-center ml-2 border-none p-2 rounded-lg bg-cyan-500 text-white hover:bg-cyan-600 dark:bg-cyan-700 dark:hover:bg-cyan-800"
                     >
-                      <svg width="18px" height="18px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <g id="snow" transform="translate(-2 -2)">
-                          <path id="primary" d="M3,12H21M12,3V21" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-2" data-name="primary" d="M19,9l-2,3,2,3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-3" data-name="primary" d="M5,15l2-3L5,9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-4" data-name="primary" d="M15,19l-3-2L9,19" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                          <path id="primary-5" data-name="primary" d="M9,5l3,2,3-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
-                        </g>
-                      </svg>
+                      <FreezeIcon color="white" />
                       Freeze
                     </button>
                   )
@@ -204,9 +373,7 @@ function App() {
                 </button>
               </div>
               <div className={`mt-2 text-sm px-3 py-1 rounded flex items-center justify-center ${getStatusStyle(todo.status)}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
+                {getStatusIcon(todo.status)}
                 {todo.status}
               </div>
             </li>
