@@ -43,4 +43,4 @@ Open your browser and navigate to `http://localhost:5174/`.
 
 ## 💬 Feedback
 
-If you have any feedback, please add an issue on the [GitHub Repository](https://gautierpicon.github.io/Task-Manager/issues).
+If you have any feedback, please add an issue on the [GitHub Repository](https://github.com/Gautierpicon/Task-Manager/issues).
